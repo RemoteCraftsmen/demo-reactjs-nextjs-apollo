@@ -1,5 +1,4 @@
-import React from "react";
-import gql from "graphql-tag";
+import React, { useState } from "react";
 import { useMutation } from "@apollo/react-hooks";
 import {
   ListItem,
@@ -7,32 +6,27 @@ import {
   ListItemText,
   ListItemSecondaryAction,
   Checkbox,
-  IconButton
+  IconButton,
+  Tooltip
 } from "@material-ui/core";
 import DeleteIcon from "@material-ui/icons/Delete";
+import EditIcon from "@material-ui/icons/Edit";
 
-const UPDATE_TODO_MUTATION = gql`
-  mutation updateTodo($id: ID!, $completed: Boolean!) {
-    updateTodo(id: $id, completed: $completed) {
-      completed
-    }
-  }
-`;
-
-const DELETE_TODO_MUTATION = gql`
-  mutation deleteTodo($id: ID!) {
-    deleteTodo(id: $id) {
-      id
-    }
-  }
-`;
+import TodoEditDialog from "./TodoEditDialog";
+import {
+  UPDATE_TODO_MUTATION,
+  EDIT_TODO_MUTATION,
+  DELETE_TODO_MUTATION
+} from "../graphql/todo/todoMutations";
 
 export default function Todo({ todo }) {
   const [deleteTodo] = useMutation(DELETE_TODO_MUTATION);
   const [updateTodo] = useMutation(UPDATE_TODO_MUTATION);
+  const [editTodo] = useMutation(EDIT_TODO_MUTATION);
 
-  const onDeleteTodo = e => {
-    e.preventDefault();
+  const [open, setOpen] = useState(false);
+
+  const onDeleteTodo = () => {
     deleteTodo({
       variables: {
         id: todo.id
@@ -41,8 +35,7 @@ export default function Todo({ todo }) {
     });
   };
 
-  const onUpdateTodo = e => {
-    e.preventDefault();
+  const onUpdateTodo = () => {
     updateTodo({
       variables: {
         id: todo.id,
@@ -52,14 +45,28 @@ export default function Todo({ todo }) {
     });
   };
 
+  const onEditTodo = description => {
+    showEditDialog(false);
+    editTodo({
+      variables: {
+        id: todo.id,
+        description
+      },
+      refetchQueries: ["TodosQuery"]
+    });
+  };
+
+  const showEditDialog = isOpen => {
+    setOpen(isOpen);
+  };
+
   return (
     <ListItem
       style={{
         textDecoration: todo.completed ? "line-through" : "none"
       }}
-      button
       dense
-      onClick={onUpdateTodo}
+      divider
     >
       <ListItemIcon>
         <Checkbox
@@ -73,9 +80,22 @@ export default function Todo({ todo }) {
       </ListItemIcon>
       <ListItemText primary={todo.description} />
       <ListItemSecondaryAction>
-        <IconButton edge="end" aria-label="delete" onClick={onDeleteTodo}>
-          <DeleteIcon />
-        </IconButton>
+        <Tooltip title="Edit">
+          <IconButton aria-label="edit" onClick={() => showEditDialog(true)}>
+            <EditIcon color="primary" />
+          </IconButton>
+        </Tooltip>
+        <TodoEditDialog
+          open={open}
+          desc={todo.description}
+          handleClose={() => showEditDialog(false)}
+          handleEdit={onEditTodo}
+        ></TodoEditDialog>
+        <Tooltip title="Delete">
+          <IconButton edge="end" aria-label="delete" onClick={onDeleteTodo}>
+            <DeleteIcon color="primary" />
+          </IconButton>
+        </Tooltip>
       </ListItemSecondaryAction>
     </ListItem>
   );

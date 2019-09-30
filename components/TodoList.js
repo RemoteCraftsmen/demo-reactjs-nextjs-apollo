@@ -1,19 +1,9 @@
 import React from "react";
-import Todo from "./Todo";
-import { List } from "@material-ui/core";
 import { useQuery } from "@apollo/react-hooks";
-import gql from "graphql-tag";
-import CircularProgress from "@material-ui/core/CircularProgress";
+import { CircularProgress, List } from "@material-ui/core";
 
-export const GET_TODOS_QUERY = gql`
-  query TodosQuery {
-    userTodos {
-      id
-      description
-      completed
-    }
-  }
-`;
+import Todo from "./Todo";
+import { GET_TODOS_QUERY } from "../graphql/todo/todoQueries";
 
 export default function TodoList() {
   const { loading, error, data } = useQuery(GET_TODOS_QUERY);

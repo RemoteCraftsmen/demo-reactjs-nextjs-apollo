@@ -1,10 +1,10 @@
 import Head from "next/head";
 import { CssBaseline } from "@material-ui/core";
 
-const Layout = ({ children }) => (
+const Layout = ({ children, title = "Next.js Todo App" }) => (
   <div>
     <Head>
-      <title>Next.js Todo App</title>
+      <title>{title}</title>
     </Head>
     <CssBaseline />
     {children}

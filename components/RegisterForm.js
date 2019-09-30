@@ -1,28 +1,10 @@
-import React from "react";
-import { useState } from "react";
-import { useMutation, useApolloClient } from "@apollo/react-hooks";
-import gql from "graphql-tag";
-import redirect from "../lib/redirect";
+import React, { useState } from "react";
+import { useMutation } from "@apollo/react-hooks";
 import { TextField, Button, Grid, FormLabel } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 
-const SIGNUP_MUTATION = gql`
-  mutation(
-    $email: String!
-    $password: String!
-    $firstName: String!
-    $lastName: String!
-  ) {
-    signUp(
-      email: $email
-      password: $password
-      firstName: $firstName
-      lastName: $lastName
-    ) {
-      id
-    }
-  }
-`;
+import redirect from "../lib/redirect";
+import { SIGNUP_MUTATION } from "../graphql/user/userMutations";
 
 const useStyles = makeStyles(theme => ({
   form: {
@@ -37,39 +19,43 @@ const useStyles = makeStyles(theme => ({
 export default function RegisterForm() {
   const classes = useStyles();
 
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [values, setValues] = useState({
+    firstName: "",
+    lastName: "",
+    email: "",
+    password: ""
+  });
+
+  const handleChange = prop => event => {
+    setValues({ ...values, [prop]: event.target.value });
+  };
 
   const onCompleted = data => {
     redirect({}, "/login");
   };
 
-  const onError = error => {
-    console.error(error);
-  };
+  const onError = error => {};
 
   const [signUp, { error }] = useMutation(SIGNUP_MUTATION, {
     onCompleted,
     onError
   });
 
+  const handleSubmit = e => {
+    e.preventDefault();
+    const { firstName, lastName, email, password } = values;
+    signUp({
+      variables: {
+        firstName,
+        lastName,
+        email,
+        password
+      }
+    });
+  };
+
   return (
-    <form
-      className={classes.form}
-      onSubmit={e => {
-        e.preventDefault();
-        signUp({
-          variables: {
-            firstName,
-            lastName,
-            email,
-            password
-          }
-        });
-      }}
-    >
+    <form className={classes.form} onSubmit={e => handleSubmit(e)}>
       <Grid container spacing={2}>
         <Grid item xs={12} sm={6}>
           <TextField
@@ -80,7 +66,8 @@ export default function RegisterForm() {
             variant="outlined"
             required
             fullWidth
-            onChange={e => setFirstName(e.target.value)}
+            value={values.firstName}
+            onChange={handleChange("firstName")}
           />
         </Grid>
         <Grid item xs={12} sm={6}>
@@ -91,7 +78,8 @@ export default function RegisterForm() {
             variant="outlined"
             required
             fullWidth
-            onChange={e => setLastName(e.target.value)}
+            values={values.lastName}
+            onChange={handleChange("lastName")}
           />
         </Grid>
         <Grid item xs={12}>
@@ -102,7 +90,8 @@ export default function RegisterForm() {
             variant="outlined"
             required
             fullWidth
-            onChange={e => setEmail(e.target.value)}
+            value={values.email}
+            onChange={handleChange("email")}
           />
         </Grid>
         <Grid item xs={12}>
@@ -114,11 +103,14 @@ export default function RegisterForm() {
             variant="outlined"
             required
             fullWidth
-            onChange={e => setPassword(e.target.value)}
+            value={values.password}
+            onChange={handleChange("password")}
           />
         </Grid>
         <Grid item xs={12}>
-          <FormLabel>{error && error.message}</FormLabel>
+          <FormLabel>
+            {error && error.message.replace("GraphQL error:", "").trim()}
+          </FormLabel>
         </Grid>
       </Grid>
       <Button

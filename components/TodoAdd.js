@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useMutation } from "@apollo/react-hooks";
 import { makeStyles } from "@material-ui/core/styles";
 import {
   TextField,
@@ -7,19 +8,9 @@ import {
   Container
 } from "@material-ui/core";
 import { AddCircle, Assignment } from "@material-ui/icons";
-import { useMutation } from "@apollo/react-hooks";
-import gql from "graphql-tag";
-import { GET_TODOS_QUERY } from "./TodoList";
 
-const ADD_TODO_MUTATION = gql`
-  mutation createTodo($description: String!) {
-    createTodo(description: $description) {
-      id
-      description
-      completed
-    }
-  }
-`;
+import { GET_TODOS_QUERY } from "../graphql/todo/todoQueries";
+import { ADD_TODO_MUTATION } from "../graphql/todo/todoMutations";
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -41,7 +32,6 @@ const useStyles = makeStyles(theme => ({
 export default function AddTodo() {
   const classes = useStyles();
   const [description, setDescription] = useState("");
-
   const [createTodo, { loading }] = useMutation(ADD_TODO_MUTATION);
 
   const onAddTodo = e => {
@@ -63,6 +53,7 @@ export default function AddTodo() {
         });
       }
     });
+    setDescription(" ");
   };
 
   return (
@@ -75,6 +66,7 @@ export default function AddTodo() {
           variant="outlined"
           fullWidth
           required
+          value={description}
           onChange={e => setDescription(e.target.value)}
           InputProps={{
             endAdornment: (

@@ -1,12 +1,13 @@
 import { Link as NextLink } from "next/link";
-import { withApollo } from "../lib/apollo";
-import redirect from "../lib/redirect";
-import checkLoggedIn from "../lib/checkLoggedIn";
-import Layout from "../components/Layout";
-import LoginForm from "../components/LoginForm";
 import { Container, Typography, Link, Avatar } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import LockOutlinedIcon from "@material-ui/icons/LockOutlined";
+
+import { withApollo } from "../lib/apollo";
+import checkLoggedIn from "../lib/checkLoggedIn";
+import redirect from "../lib/redirect";
+import Layout from "../components/Layout";
+import LoginForm from "../components/LoginForm";
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -24,7 +25,7 @@ const useStyles = makeStyles(theme => ({
 const Login = () => {
   const classes = useStyles();
   return (
-    <Layout>
+    <Layout title="Login">
       <Container maxWidth="sm" className={classes.root}>
         <Avatar justify="center" className={classes.avatar}>
           <LockOutlinedIcon />

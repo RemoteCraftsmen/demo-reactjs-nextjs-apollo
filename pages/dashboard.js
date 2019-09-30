@@ -1,17 +1,18 @@
+import { Container } from "@material-ui/core";
+
 import { withApollo } from "../lib/apollo";
 import redirect from "../lib/redirect";
 import checkLoggedIn from "../lib/checkLoggedIn";
 import Layout from "../components/Layout";
 import NavBar from "../components/NavBar";
-import AddTodo from "../components/AddTodo";
+import TodoAdd from "../components/TodoAdd";
 import TodoList from "../components/TodoList";
-import { Container } from "@material-ui/core";
 
 const Dashboard = () => (
-  <Layout>
+  <Layout title="Dashboard">
     <NavBar />
     <Container maxWidth="lg">
-      <AddTodo />
+      <TodoAdd />
       <TodoList />
     </Container>
   </Layout>

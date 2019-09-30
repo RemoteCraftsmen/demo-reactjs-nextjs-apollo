@@ -1,12 +1,13 @@
 import { Link as NextLink } from "next/link";
+import { Container, Typography, Link, Avatar } from "@material-ui/core";
+import { makeStyles } from "@material-ui/core/styles";
+import LockOutlinedIcon from "@material-ui/icons/LockOutlined";
+
 import { withApollo } from "../lib/apollo";
 import redirect from "../lib/redirect";
 import checkLoggedIn from "../lib/checkLoggedIn";
 import Layout from "../components/Layout";
 import RegisterForm from "../components/RegisterForm";
-import { Container, Typography, Link, Avatar } from "@material-ui/core";
-import { makeStyles } from "@material-ui/core/styles";
-import LockOutlinedIcon from "@material-ui/icons/LockOutlined";
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -24,7 +25,7 @@ const useStyles = makeStyles(theme => ({
 const Signup = () => {
   const classes = useStyles();
   return (
-    <Layout>
+    <Layout title="Sign Up">
       <Container maxWidth="sm" className={classes.root}>
         <Avatar justify="center" className={classes.avatar}>
           <LockOutlinedIcon />
@@ -44,7 +45,7 @@ const Signup = () => {
 Signup.getInitialProps = async context => {
   const { loggedInUser } = await checkLoggedIn(context.apolloClient);
   if (loggedInUser.me) {
-    redirect(context, "/");
+    redirect(context, "/dashboard");
   }
   return { loggedInUser };
 };

@@ -1,17 +1,19 @@
 import { useState } from "react";
 import { useMutation, useApolloClient } from "@apollo/react-hooks";
-import gql from "graphql-tag";
-import redirect from "../lib/redirect";
-import { TextField, Button, Grid, FormLabel } from "@material-ui/core";
+import {
+  TextField,
+  Button,
+  Grid,
+  FormLabel,
+  InputAdornment,
+  IconButton
+} from "@material-ui/core";
+import Visibility from "@material-ui/icons/Visibility";
+import VisibilityOff from "@material-ui/icons/VisibilityOff";
 import { makeStyles } from "@material-ui/core/styles";
 
-const LOGIN_MUTATION = gql`
-  mutation($email: String!, $password: String!) {
-    signIn(email: $email, password: $password) {
-      id
-    }
-  }
-`;
+import redirect from "../lib/redirect";
+import { LOGIN_MUTATION } from "../graphql/user/userMutations";
 
 const useStyles = makeStyles(theme => ({
   form: {
@@ -27,8 +29,23 @@ export default function LoginForm() {
   const client = useApolloClient();
   const classes = useStyles();
 
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [values, setValues] = useState({
+    email: "",
+    password: "",
+    showPassword: false
+  });
+
+  const handleChange = prop => event => {
+    setValues({ ...values, [prop]: event.target.value });
+  };
+
+  const handleClickShowPassword = () => {
+    setValues({ ...values, showPassword: !values.showPassword });
+  };
+
+  const handleMouseDownPassword = e => {
+    e.preventDefault();
+  };
 
   const onCompleted = data => {
     client.cache.reset().then(() => {
@@ -36,28 +53,25 @@ export default function LoginForm() {
     });
   };
 
-  const onError = error => {
-    console.error(error);
-  };
+  const onError = error => {};
 
   const [signIn, { error }] = useMutation(LOGIN_MUTATION, {
     onCompleted,
     onError
   });
 
+  const handleSubmit = e => {
+    e.preventDefault();
+    signIn({
+      variables: {
+        email: values.email,
+        password: values.password
+      }
+    });
+  };
+
   return (
-    <form
-      className={classes.form}
-      onSubmit={e => {
-        e.preventDefault();
-        signIn({
-          variables: {
-            email: email,
-            password: password
-          }
-        });
-      }}
-    >
+    <form className={classes.form} onSubmit={handleSubmit}>
       <Grid container spacing={2}>
         <Grid item xs={12}>
           <TextField
@@ -67,7 +81,8 @@ export default function LoginForm() {
             variant="outlined"
             required
             fullWidth
-            onChange={e => setEmail(e.target.value)}
+            value={values.email}
+            onChange={handleChange("email")}
           />
         </Grid>
         <Grid item xs={12}>
@@ -77,12 +92,32 @@ export default function LoginForm() {
             required
             fullWidth
             label="Password"
-            type="password"
-            onChange={e => setPassword(e.target.value)}
+            type={values.showPassword ? "text" : "password"}
+            value={values.password}
+            onChange={handleChange("password")}
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="end">
+                  <IconButton
+                    aria-label="toggle password visibility"
+                    onClick={handleClickShowPassword}
+                    onMouseDown={handleMouseDownPassword}
+                  >
+                    {values.showPassword ? (
+                      <Visibility color="primary" />
+                    ) : (
+                      <VisibilityOff color="primary" />
+                    )}
+                  </IconButton>
+                </InputAdornment>
+              )
+            }}
           />
         </Grid>
         <Grid item xs={12}>
-          <FormLabel>{error && error.message}</FormLabel>
+          <FormLabel>
+            {error && error.message.replace("GraphQL error:", "").trim()}
+          </FormLabel>
         </Grid>
       </Grid>
       <Button

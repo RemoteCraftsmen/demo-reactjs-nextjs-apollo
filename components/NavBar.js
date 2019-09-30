@@ -1,15 +1,10 @@
 import React from "react";
 import { useApolloClient, useMutation } from "@apollo/react-hooks";
-import gql from "graphql-tag";
 import { makeStyles } from "@material-ui/core/styles";
 import { AppBar, Button, Toolbar, Typography } from "@material-ui/core";
-import redirect from "../lib/redirect";
 
-const SIGNOUT_MUTATION = gql`
-  mutation signOut {
-    signOut
-  }
-`;
+import redirect from "../lib/redirect";
+import { SIGNOUT_MUTATION } from "../graphql/user/userMutations";
 
 const useStyles = makeStyles(theme => ({
   root: {
