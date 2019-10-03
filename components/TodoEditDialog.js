@@ -1,5 +1,5 @@
 import React from "react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Dialog,
   DialogActions,
@@ -51,8 +51,8 @@ export default function TodoEditDialog(props) {
       <DialogActions>
         <Button
           onClick={() => {
-            setDescription("");
             handleClose();
+            setDescription(desc);
           }}
           color="primary"
         >
@@ -60,7 +60,6 @@ export default function TodoEditDialog(props) {
         </Button>
         <Button
           onClick={() => {
-            setDescription("");
             handleEdit(description);
           }}
           color="primary"
