@@ -13,9 +13,12 @@ export default function TodoList() {
         <CircularProgress style={{ margin: "50px", display: "inline-block" }} />
       </div>
     );
+  const sortedData = data.userTodos.sort(
+    (a, b) => a.completed - b.completed || b.updatedAt - a.updatedAt
+  );
   return (
     <List>
-      {data.userTodos.map(todo => (
+      {sortedData.map(todo => (
         <Todo key={todo.id} todo={todo} />
       ))}
     </List>
