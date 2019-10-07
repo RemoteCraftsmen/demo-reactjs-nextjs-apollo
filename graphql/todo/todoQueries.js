@@ -7,6 +7,7 @@ export const GET_TODOS_QUERY = gql`
       description
       completed
       updatedAt
+      createdAt
     }
   }
 `;

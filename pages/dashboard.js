@@ -5,8 +5,8 @@ import redirect from "../lib/redirect";
 import checkLoggedIn from "../lib/checkLoggedIn";
 import Layout from "../components/Layout";
 import NavBar from "../components/NavBar";
-import TodoAdd from "../components/TodoAdd";
-import TodoList from "../components/TodoList";
+import TodoAdd from "../components/Todo/TodoAdd";
+import TodoList from "../components/Todo/TodoList";
 
 const Dashboard = () => (
   <Layout title="Dashboard">

@@ -9,8 +9,7 @@ import {
 } from "@material-ui/core";
 import { AddCircle, Assignment } from "@material-ui/icons";
 
-import { GET_TODOS_QUERY } from "../graphql/todo/todoQueries";
-import { ADD_TODO_MUTATION } from "../graphql/todo/todoMutations";
+import { ADD_TODO_MUTATION } from "../../graphql/todo/todoMutations";
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -40,18 +39,7 @@ export default function AddTodo() {
       variables: {
         description
       },
-      update: (proxy, { data: { createTodo } }) => {
-        const data = proxy.readQuery({
-          query: GET_TODOS_QUERY
-        });
-        proxy.writeQuery({
-          query: GET_TODOS_QUERY,
-          data: {
-            ...data,
-            userTodos: [...data.userTodos, createTodo]
-          }
-        });
-      }
+      refetchQueries: ["TodosQuery"]
     });
     setDescription(" ");
   };

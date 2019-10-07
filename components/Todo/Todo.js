@@ -17,7 +17,7 @@ import {
   UPDATE_TODO_MUTATION,
   EDIT_TODO_MUTATION,
   DELETE_TODO_MUTATION
-} from "../graphql/todo/todoMutations";
+} from "../../graphql/todo/todoMutations";
 
 export default function Todo({ todo }) {
   const [deleteTodo] = useMutation(DELETE_TODO_MUTATION);
