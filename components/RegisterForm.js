@@ -31,7 +31,7 @@ export default function RegisterForm() {
   };
 
   const onCompleted = data => {
-    redirect({}, "/login");
+    redirect({}, "/dashboard");
   };
 
   const onError = error => {};
