@@ -15,5 +15,9 @@ git clone git@bitbucket.org:remotecraftsmen/demo-reactjs-nextjs-apollo.git
 ### Copy the example env file and make the required configuration changes in the .env file:
 `cp .env.example .env`
 
+### Running on production with pm2 process with custom port
+`pm2 start npm --name "react-nextjs-apollo" -- start -- -p 3060`
 
+## DEMO:
+https://demo-react-nextjs-apollo-app.rmtcfm.com
 
